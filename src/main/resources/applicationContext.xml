@@ -1,0 +1,53 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd ">
+
+	<bean id="simpleServiceBean"  class="com.wha.services.SimpleService"  >
+		<property name="name"  value="Hello"  />
+		<property name="id"    value="12345"  />
+	</bean>
+
+	<bean id="doBeforeMethodBean" class="com.wha.aop.DoBeforeMethod" />
+	<bean id="doAfterMethodBean" class="com.wha.aop.DoAfterReturningMethod" />
+	<bean id="doAfterTrowingExceptionMethodBean" class="com.wha.aop.DoAfterThrowingExceptionMethod" />
+	
+	<bean id="doAroundMethodBean" class="com.wha.aop.DoAroundMethod" />
+
+	<!--   ajout pour l adviser -->
+	<bean id="simplePointcut"  class="org.springframework.aop.support.NameMatchMethodPointcut"  >
+		<property name="mappedName"  value="sayHello"  />		
+	</bean>
+	<bean id="simpleAdvisor"   class="org.springframework.aop.support.DefaultPointcutAdvisor"  >
+		<property name="pointcut"   ref="simplePointcut"  />
+		<property name="advice"   ref="doAroundMethodBean"  />
+	</bean>
+	
+	<bean id="regexAdvisor"  class="org.springframework.aop.support.RegexpMethodPointcutAdvisor" >
+		<property name="patterns" >
+			<list>
+				<value>.*Hello.*</value>
+			</list>		
+		</property>
+		<property name="advice"  ref="doAroundMethodBean"  />	
+	</bean>
+	
+	<bean id="simpleServiceProxy" class="org.springframework.aop.framework.ProxyFactoryBean" >
+		<property name="target"  ref="simpleServiceBean"  />
+		<property name="interceptorNames">
+			<list>
+			<value>doAfterTrowingExceptionMethodBean</value>
+			
+<!--  				<value>doBeforeMethodBean</value> -->
+<!--  				<value>doAfterMethodBean</value> -->
+<!--  				<value>simpleAdvisor</value>  -->
+<!--  				<value>regexAdvisor</value> -->
+			</list>		
+		</property>
+	</bean>
+
+
+</beans>
